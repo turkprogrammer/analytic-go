@@ -22,8 +22,22 @@ func TrackHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Подключаемся к базе данных
+	db, err := repository.Connect()
+	if err != nil {
+		log.Printf("Ошибка при подключении к базе данных: %v", err)
+		http.Error(w, "Ошибка при подключении к базе данных", http.StatusInternalServerError)
+		return
+	}
+	defer func() {
+		err := db.Close()
+		if err != nil {
+			log.Printf("Ошибка при закрытии соединения с базой данных: %v", err)
+		}
+	}()
+
 	// Вставляем событие в базу данных
-	err := repository.InsertEvent(eventName, time.Now())
+	err = repository.InsertEvent(eventName, time.Now(), db)
 	if err != nil {
 		log.Printf("Ошибка при записи в базу данных: %v", err)
 		http.Error(w, "Ошибка при записи в базу данных", http.StatusInternalServerError)
@@ -32,6 +46,6 @@ func TrackHandler(w http.ResponseWriter, r *http.Request) {
 
 	_, err = fmt.Fprint(w, "Событие успешно зарегистрировано")
 	if err != nil {
-		return
+		log.Printf("Ошибка при отправке ответа: %v", err)
 	}
 }

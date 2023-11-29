@@ -24,6 +24,24 @@ go run cmd/main.go
 
 Проверьте базу данных ClickHouse, чтобы убедиться, что событие было записано. Используйте средства администрирования ClickHouse или запросы SQL.
 
+## Тесты
+    go get github.com/DATA-DOG/go-sqlmock
+    go get github.com/stretchr/testify/assert
+
+## Зависимости для тестов
+
+    github.com/DATA-DOG/go-sqlmock 
+для создания фейковой базы данных и мокирования запросов.
+
+    github.com/stretchr/testify/assert 
+для удобных функций проверки утверждений.
+
+## Запуск теста
+
+    go test ./...
+
+![img.png](img.png)
+
 ## Структура проекта
 
 ```plaintext

@@ -1,12 +1,16 @@
 package repository
 
 import (
-	"analytics/internal/db"
 	"database/sql"
 	"fmt"
 	"log"
 	"time"
 )
+
+// Repository представляет собой репозиторий для взаимодействия с базой данных.
+type Repository struct {
+	DB *sql.DB
+}
 
 // Connect открывает соединение с ClickHouse и возвращает объект *sql.DB.
 func Connect() (*sql.DB, error) {
@@ -38,27 +42,14 @@ func Connect() (*sql.DB, error) {
 }
 
 // InsertEvent вставляет событие в базу данных.
-func InsertEvent(name string, timestamp time.Time) error {
-	// Подключение к базе данных
-	conn, err := db.Connect()
-	if err != nil {
-		return fmt.Errorf("ошибка при подключении к базе данных: %v", err)
-	}
-	defer func(conn *sql.DB) {
-		err := conn.Close()
-		if err != nil {
-			log.Printf("Ошибка при закрытии соединения с базой данных: %v", err)
-		}
-	}(conn)
-
+func InsertEvent(name string, timestamp time.Time, db *sql.DB) error {
 	// Начало транзакции
-	tx, err := conn.Begin()
+	tx, err := db.Begin()
 	if err != nil {
 		return fmt.Errorf("ошибка при начале транзакции: %v", err)
 	}
 	defer func(tx *sql.Tx) {
-		err := tx.Commit()
-		if err != nil {
+		if err := tx.Commit(); err != nil {
 			log.Printf("Ошибка при коммите транзакции: %v", err)
 		}
 	}(tx)
