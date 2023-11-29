@@ -8,37 +8,35 @@ import (
 	"time"
 )
 
-// db.Connect открывает соединение с ClickHouse и возвращает объект *sql.DB.
 // Connect открывает соединение с ClickHouse и возвращает объект *sql.DB.
 func Connect() (*sql.DB, error) {
 	// Параметры подключения к ClickHouse
 	connectParams := "tcp://localhost:9000?username=default&password=&database=default"
 
 	// Открываем соединение
-	db, err := sql.Open("clickhouse", connectParams)
+	database, err := sql.Open("clickhouse", connectParams)
 	if err != nil {
 		log.Fatal(err)
 		return nil, err
 	}
 
 	// Устанавливаем диалект ClickHouse
-	_, err = db.Exec("SET sql_dialect = 'default'")
+	_, err = database.Exec("SET sql_dialect = 'default'")
 	if err != nil {
 		log.Printf("Ошибка при установке диалекта ClickHouse: %v", err)
 		return nil, err
 	}
 
 	// Проверяем, что соединение действительно установлено
-	err = db.Ping()
+	err = database.Ping()
 	if err != nil {
 		log.Printf("Ошибка при проверке соединения с ClickHouse: %v", err)
 		return nil, err
 	}
 
-	return db, nil
+	return database, nil
 }
 
-// InsertEvent вставляет событие в базу данных.
 // InsertEvent вставляет событие в базу данных.
 func InsertEvent(name string, timestamp time.Time) error {
 	// Подключение к базе данных

@@ -16,7 +16,9 @@ go run cmd/main.go
 
 ## Как проверить работоспособность
     curl -X POST http://localhost:8080/track -d "event=page_view"
-Или выполните аналогичный запрос в Postman.
+Или выполните аналогичный POST запрос в Postman.
+
+    http://localhost:8080/track?event=page_view
 
 Проверьте, что получаете ответ "Событие успешно зарегистрировано".
 
